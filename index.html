@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1e1e1e">
+<title>VS Mobile</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.7/ace.min.css">
+<link rel="stylesheet" href="/assets/css/app.css">
+</head>
+<body>
+
+<!-- ============== AUTH SCREEN ============== -->
+<div id="screen-auth" class="screen active">
+  <div class="auth-box">
+    <h1 class="logo">VS<span>Mobile</span></h1>
+    <p class="tagline">Code anywhere.</p>
+
+    <div class="tabs">
+      <button class="tab active" data-authtab="login">Login</button>
+      <button class="tab" data-authtab="register">Register</button>
+    </div>
+
+    <form id="form-login" class="auth-form">
+      <input type="email" id="login-email" placeholder="Email" required>
+      <input type="password" id="login-password" placeholder="Password" required>
+      <button type="submit" class="btn-primary">Sign In</button>
+      <div class="auth-error" id="login-error"></div>
+    </form>
+
+    <form id="form-register" class="auth-form hidden">
+      <input type="text" id="reg-username" placeholder="Username" required>
+      <input type="email" id="reg-email" placeholder="Email" required>
+      <input type="password" id="reg-password" placeholder="Password" required>
+      <button type="submit" class="btn-primary">Create Account</button>
+      <div class="auth-error" id="reg-error"></div>
+    </form>
+  </div>
+</div>
+
+<!-- ============== PROJECTS SCREEN ============== -->
+<div id="screen-projects" class="screen">
+  <header class="app-header">
+    <h2>My Projects</h2>
+    <button class="icon-btn" id="btn-logout" title="Logout">⎋</button>
+  </header>
+
+  <div class="projects-body">
+    <button class="btn-primary btn-new" id="btn-new-project">+ New Project</button>
+    <div id="projects-list" class="projects-list"></div>
+  </div>
+</div>
+
+<!-- ============== EDITOR SCREEN ============== -->
+<div id="screen-editor" class="screen">
+
+  <!-- Top bar -->
+  <header class="editor-header">
+    <button class="icon-btn" id="btn-back">←</button>
+    <div class="editor-title" id="editor-project-name">Project</div>
+    <button class="icon-btn" id="btn-sidebar-toggle">☰</button>
+  </header>
+
+  <!-- Tabs -->
+  <div class="editor-tabs" id="editor-tabs"></div>
+
+  <!-- Editor area -->
+  <div class="editor-body">
+    <div id="ace-editor"></div>
+    <div class="editor-empty" id="editor-empty">
+      <p>Open a file from the sidebar</p>
+    </div>
+  </div>
+
+  <!-- Bottom toolbar -->
+  <footer class="editor-toolbar">
+    <button class="tool-btn" id="btn-save">💾 Save</button>
+    <button class="tool-btn" id="btn-new-file">📄 File</button>
+    <button class="tool-btn" id="btn-new-folder">📁 Folder</button>
+    <button class="tool-btn" id="btn-preview">▶ Preview</button>
+  </footer>
+
+  <!-- Sidebar (drawer) -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <span>Explorer</span>
+      <button class="icon-btn" id="btn-sidebar-close">✕</button>
+    </div>
+    <div class="file-tree" id="file-tree"></div>
+  </aside>
+  <div class="overlay" id="overlay"></div>
+</div>
+
+<!-- ============== MODAL (create project/file/etc.) ============== -->
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal" id="modal">
+    <h3 id="modal-title">Title</h3>
+    <div id="modal-body"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="modal-cancel">Cancel</button>
+      <button class="btn-primary" id="modal-confirm">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============== TOASTS ============== -->
+<div id="toast" class="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.7/ace.min.js"></script>
+<script src="/assets/js/api.js"></script>
+<script src="/assets/js/app.js"></script>
+</body>
+</html>
