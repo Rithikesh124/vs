@@ -1,113 +1,283 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#1e1e1e">
-<title>VS Mobile</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.7/ace.min.css">
-<link rel="stylesheet" href="/assets/css/app.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#07090e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>VS Mobile - Next-Gen Mobile IDE with AI</title>
+  <!-- Ace Editor CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.7/ace.min.css">
+  <!-- App Stylesheet -->
+  <link rel="stylesheet" href="/assets/css/app.css">
 </head>
 <body>
 
-<!-- ============== AUTH SCREEN ============== -->
-<div id="screen-auth" class="screen active">
-  <div class="auth-box">
-    <h1 class="logo">VS<span>Mobile</span></h1>
-    <p class="tagline">Code anywhere.</p>
+  <!-- ==================== PROJECTS SCREEN ==================== -->
+  <div id="screen-projects" class="screen active">
+    <header class="app-header">
+      <div class="brand-logo">
+        <span>VS</span>Mobile
+        <span class="logo-badge">AI Core</span>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn ai-btn-header" id="btn-settings-projects" title="AI Settings">⚙️</button>
+      </div>
+    </header>
 
-    <div class="tabs">
-      <button class="tab active" data-authtab="login">Login</button>
-      <button class="tab" data-authtab="register">Register</button>
-    </div>
+    <div class="projects-container">
+      <div class="projects-hero">
+        <h2>Mobile Studio</h2>
+        <p>Full-stack coding, live device preview & AI pair programming in your pocket.</p>
+      </div>
 
-    <form id="form-login" class="auth-form">
-      <input type="email" id="login-email" placeholder="Email" required>
-      <input type="password" id="login-password" placeholder="Password" required>
-      <button type="submit" class="btn-primary">Sign In</button>
-      <div class="auth-error" id="login-error"></div>
-    </form>
+      <div class="projects-bar">
+        <button class="btn-primary" id="btn-new-project">
+          <span>+</span> New Project
+        </button>
+      </div>
 
-    <form id="form-register" class="auth-form hidden">
-      <input type="text" id="reg-username" placeholder="Username" required>
-      <input type="email" id="reg-email" placeholder="Email" required>
-      <input type="password" id="reg-password" placeholder="Password" required>
-      <button type="submit" class="btn-primary">Create Account</button>
-      <div class="auth-error" id="reg-error"></div>
-    </form>
-  </div>
-</div>
-
-<!-- ============== PROJECTS SCREEN ============== -->
-<div id="screen-projects" class="screen">
-  <header class="app-header">
-    <h2>My Projects</h2>
-    <button class="icon-btn" id="btn-logout" title="Logout">⎋</button>
-  </header>
-
-  <div class="projects-body">
-    <button class="btn-primary btn-new" id="btn-new-project">+ New Project</button>
-    <div id="projects-list" class="projects-list"></div>
-  </div>
-</div>
-
-<!-- ============== EDITOR SCREEN ============== -->
-<div id="screen-editor" class="screen">
-
-  <!-- Top bar -->
-  <header class="editor-header">
-    <button class="icon-btn" id="btn-back">←</button>
-    <div class="editor-title" id="editor-project-name">Project</div>
-    <button class="icon-btn" id="btn-sidebar-toggle">☰</button>
-  </header>
-
-  <!-- Tabs -->
-  <div class="editor-tabs" id="editor-tabs"></div>
-
-  <!-- Editor area -->
-  <div class="editor-body">
-    <div id="ace-editor"></div>
-    <div class="editor-empty" id="editor-empty">
-      <p>Open a file from the sidebar</p>
+      <div id="projects-list" class="projects-grid"></div>
     </div>
   </div>
 
-  <!-- Bottom toolbar -->
-  <footer class="editor-toolbar">
-    <button class="tool-btn" id="btn-save">💾 Save</button>
-    <button class="tool-btn" id="btn-new-file">📄 File</button>
-    <button class="tool-btn" id="btn-new-folder">📁 Folder</button>
-    <button class="tool-btn" id="btn-preview">▶ Preview</button>
-  </footer>
+  <!-- ==================== EDITOR SCREEN ==================== -->
+  <div id="screen-editor" class="screen">
+    <!-- Top Header -->
+    <header class="editor-header">
+      <button class="icon-btn" id="btn-back" title="Projects">←</button>
+      <div class="editor-title-wrap">
+        <div class="editor-title" id="editor-project-name">Project</div>
+        <div class="editor-subtitle" id="editor-active-filename">index.html</div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn ai-btn-header" id="btn-open-ai" title="AI Copilot">✨</button>
+        <button class="icon-btn" id="btn-sidebar-toggle" title="Explorer">☰</button>
+      </div>
+    </header>
 
-  <!-- Sidebar (drawer) -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <span>Explorer</span>
-      <button class="icon-btn" id="btn-sidebar-close">✕</button>
+    <!-- Multi-File Tabs Bar -->
+    <div class="editor-tabs-bar" id="editor-tabs"></div>
+
+    <!-- Main Ace Editor Area -->
+    <div class="editor-workspace">
+      <div id="ace-editor"></div>
+      <div class="editor-empty hidden" id="editor-empty">
+        <div class="editor-empty-icon">📄</div>
+        <p>No open file</p>
+        <button class="btn-secondary" id="btn-open-sidebar-empty">Open File Explorer</button>
+      </div>
     </div>
-    <div class="file-tree" id="file-tree"></div>
-  </aside>
-  <div class="overlay" id="overlay"></div>
-</div>
 
-<!-- ============== MODAL (create project/file/etc.) ============== -->
-<div class="modal-backdrop" id="modal-backdrop">
-  <div class="modal" id="modal">
-    <h3 id="modal-title">Title</h3>
-    <div id="modal-body"></div>
-    <div class="modal-actions">
-      <button class="btn-secondary" id="modal-cancel">Cancel</button>
-      <button class="btn-primary" id="modal-confirm">Confirm</button>
+    <!-- Virtual Keyboard Accessory Bar (Touch Coding Row) -->
+    <div class="virtual-keyboard-bar" id="virtual-keyboard">
+      <button class="vk-btn vk-accent" data-insert="  " title="Tab">Tab</button>
+      <button class="vk-btn" data-insert="{" title="Curly Brace">{</button>
+      <button class="vk-btn" data-insert="}" title="Curly Brace">}</button>
+      <button class="vk-btn" data-insert="(" title="Paren">(</button>
+      <button class="vk-btn" data-insert=")" title="Paren">)</button>
+      <button class="vk-btn" data-insert="[" title="Bracket">[</button>
+      <button class="vk-btn" data-insert="]" title="Bracket">]</button>
+      <button class="vk-btn" data-insert=";" title="Semicolon">;</button>
+      <button class="vk-btn" data-insert=":" title="Colon">:</button>
+      <button class="vk-btn" data-insert="=" title="Equals">=</button>
+      <button class="vk-btn" data-insert="<" title="Less Than">&lt;</button>
+      <button class="vk-btn" data-insert=">" title="Greater Than">&gt;</button>
+      <button class="vk-btn" data-insert='"' title="Quote">"</button>
+      <button class="vk-btn" data-insert="'" title="Single Quote">'</button>
+      <button class="vk-btn" data-insert="/" title="Slash">/</button>
+      <button class="vk-btn" data-insert="$" title="Dollar">$</button>
+      <button class="vk-btn" data-insert="!" title="Exclamation">!</button>
+      <button class="vk-btn" data-insert="&" title="Ampersand">&amp;</button>
+      <button class="vk-btn" data-insert="|" title="Pipe">|</button>
+      <button class="vk-btn vk-accent" id="vk-undo" title="Undo">↶</button>
+      <button class="vk-btn vk-accent" id="vk-redo" title="Redo">↷</button>
+    </div>
+
+    <!-- Bottom Mobile Toolbar -->
+    <footer class="editor-toolbar">
+      <button class="tool-btn" id="btn-toolbar-files">
+        <span class="tb-icon">📁</span>
+        <span>Files</span>
+      </button>
+      <button class="tool-btn ai-tool-btn" id="btn-toolbar-ai">
+        <span class="tb-icon">✨</span>
+        <span>AI Pair</span>
+      </button>
+      <button class="tool-btn highlight" id="btn-preview">
+        <span class="tb-icon">▶</span>
+        <span>Run</span>
+      </button>
+      <button class="tool-btn" id="btn-save">
+        <span class="tb-icon">💾</span>
+        <span>Save</span>
+      </button>
+      <button class="tool-btn" id="btn-settings">
+        <span class="tb-icon">⚙️</span>
+        <span>Config</span>
+      </button>
+    </footer>
+
+    <!-- File Explorer Drawer (Sidebar) -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <span>Project Explorer</span>
+        <div class="sidebar-actions">
+          <button class="icon-btn" id="btn-add-file-explorer" title="New File">📄+</button>
+          <button class="icon-btn" id="btn-add-folder-explorer" title="New Folder">📁+</button>
+          <button class="icon-btn" id="btn-sidebar-close">✕</button>
+        </div>
+      </div>
+      <div class="file-tree" id="file-tree"></div>
+    </aside>
+
+    <!-- Dim Backdrop Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- AI Assistant Drawer (Bottom Sheet) -->
+    <aside class="ai-drawer" id="ai-drawer">
+      <div class="ai-drawer-header">
+        <div class="ai-title-wrap">
+          <div class="ai-status-indicator" id="ai-status-indicator"></div>
+          <strong>VS AI Pair Programmer</strong>
+        </div>
+        <button class="icon-btn" id="btn-ai-drawer-close">✕</button>
+      </div>
+
+      <!-- Quick Action Chips -->
+      <div class="ai-quick-actions">
+        <button class="ai-chip" data-ai-act="explain">⚡ Explain Code</button>
+        <button class="ai-chip" data-ai-act="fix">🐛 Fix Bugs</button>
+        <button class="ai-chip" data-ai-act="optimize">🚀 Refactor</button>
+        <button class="ai-chip" data-ai-act="generate-calc">💡 Add Calculator</button>
+        <button class="ai-chip" data-ai-act="generate-canvas">✨ Add Neon Particles</button>
+        <button class="ai-chip" data-ai-act="test">🧪 Generate Tests</button>
+      </div>
+
+      <!-- Chat Stream Container -->
+      <div class="ai-messages" id="ai-messages">
+        <div class="ai-msg assistant">
+          <div class="ai-msg-bubble">
+            👋 <strong>Hi, I'm your mobile AI coding partner.</strong><br>
+            Tap a quick action above, or type what you need help building! I can analyze the active file, fix errors, or generate fresh components.
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Bar -->
+      <div class="ai-input-bar">
+        <input type="text" id="ai-input-text" placeholder="Ask AI or describe what to generate..." autocomplete="off">
+        <button class="ai-send-btn" id="btn-ai-send">➤</button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ==================== LIVE PREVIEW & CONSOLE MODAL ==================== -->
+  <div class="preview-modal" id="preview-modal">
+    <header class="preview-header">
+      <div class="preview-controls">
+        <button class="icon-btn" id="btn-preview-close">✕</button>
+        <div class="device-switcher">
+          <button class="device-btn active" data-device="mobile">📱 Phone</button>
+          <button class="device-btn" data-device="tablet">📲 Tablet</button>
+          <button class="device-btn" data-device="full">🖥️ Full</button>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" id="btn-preview-reload" title="Refresh Sandbox">🔄</button>
+      </div>
+    </header>
+
+    <div class="preview-body">
+      <div class="preview-frame-container mobile" id="preview-container">
+        <iframe id="preview-iframe" sandbox="allow-scripts allow-modals allow-same-origin"></iframe>
+      </div>
+    </div>
+
+    <!-- Integrated DevTools Console -->
+    <div class="console-panel" id="console-panel">
+      <div class="console-header">
+        <span>Console Logs & Output</span>
+        <button class="btn-secondary" id="btn-clear-console" style="padding: 2px 8px; font-size: 0.75rem;">Clear</button>
+      </div>
+      <div class="console-logs" id="console-logs"></div>
+      <div class="console-input-wrap">
+        <span class="console-prompt">&gt;</span>
+        <input type="text" class="console-input" id="console-input" placeholder="Execute JavaScript or inspect variables...">
+      </div>
     </div>
   </div>
-</div>
 
-<!-- ============== TOASTS ============== -->
-<div id="toast" class="toast"></div>
+  <!-- ==================== SETTINGS MODAL ==================== -->
+  <div class="modal-backdrop" id="modal-settings">
+    <div class="modal">
+      <h3>⚙️ IDE & AI Settings</h3>
+      <div class="modal-body">
+        <label style="font-size: 0.85rem; color: var(--text-secondary);">AI Engine Provider:</label>
+        <select id="setting-ai-provider">
+          <option value="offline">Smart Offline Engine (No Key Needed)</option>
+          <option value="gemini">Google Gemini (Gemini 1.5 / 2.0)</option>
+          <option value="openai">OpenAI (GPT-4o / 4o-mini)</option>
+          <option value="groq">Groq (Ultra-Fast Llama 3.3)</option>
+          <option value="claude">Anthropic Claude (Claude 3.5 Sonnet)</option>
+          <option value="custom">Custom Endpoint (OpenRouter / Local)</option>
+        </select>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.7/ace.min.js"></script>
-<script src="/assets/js/api.js"></script>
-<script src="/assets/js/app.js"></script>
+        <div id="setting-api-key-group">
+          <label style="font-size: 0.85rem; color: var(--text-secondary);">API Key:</label>
+          <input type="password" id="setting-ai-api-key" placeholder="Enter API Key (saved locally)">
+        </div>
+
+        <div id="setting-custom-endpoint-group" style="display: none;">
+          <label style="font-size: 0.85rem; color: var(--text-secondary);">Custom Base URL:</label>
+          <input type="text" id="setting-custom-endpoint" placeholder="https://openrouter.ai/api/v1/chat/completions">
+        </div>
+
+        <label style="font-size: 0.85rem; color: var(--text-secondary);">Editor Color Theme:</label>
+        <select id="setting-editor-theme">
+          <option value="monokai">Monokai Dark (Default)</option>
+          <option value="dracula">Dracula</option>
+          <option value="tomorrow_night">Tomorrow Night</option>
+          <option value="twilight">Twilight</option>
+          <option value="chrome">Light (Day Mode)</option>
+        </select>
+
+        <label style="font-size: 0.85rem; color: var(--text-secondary);">Font Size:</label>
+        <select id="setting-font-size">
+          <option value="12px">12px - Dense</option>
+          <option value="13.5px" selected>13.5px - Standard Mobile</option>
+          <option value="15px">15px - Large</option>
+          <option value="17px">17px - Extra Large</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-primary" id="btn-save-settings">Save Preferences</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== GENERIC MODAL ==================== -->
+  <div class="modal-backdrop" id="modal-backdrop">
+    <div class="modal" id="modal">
+      <h3 id="modal-title">Title</h3>
+      <div id="modal-body" class="modal-body"></div>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="modal-cancel">Cancel</button>
+        <button class="btn-primary" id="modal-confirm">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast"></div>
+
+  <!-- Ace Editor & Ext Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.7/ace.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.7/ext-language_tools.min.js"></script>
+  <!-- App JS Modules -->
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/ai.js"></script>
+  <script src="/assets/js/app.js"></script>
 </body>
 </html>

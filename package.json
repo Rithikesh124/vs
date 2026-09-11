@@ -1,0 +1,13 @@
+{
+  "name": "vs-code-mobile",
+  "version": "1.0.0",
+  "description": "Next-Gen Mobile IDE with AI Integration, Live Sandbox & Offline-First Storage",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["mobile-ide", "ai-ide", "code-editor", "web-ide", "cursor-mobile"],
+  "author": "",
+  "license": "MIT"
+}
